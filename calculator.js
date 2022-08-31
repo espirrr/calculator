@@ -1,6 +1,6 @@
-let calculatedNumber = 0;
+let displayValue = 0;
 
-// Operators
+// 
 function add(a, b) {
     return a + b;
 }
