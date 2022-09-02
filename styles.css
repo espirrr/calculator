@@ -26,12 +26,9 @@ html {
     justify-content: center;
     border-bottom: 5px solid rgb(0, 0, 0); 
     height: 100px;
-    
-  
 }
 
 #calcDisplay {
-
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -47,7 +44,6 @@ html {
     
     font-size: 40px;
     font-family: 'Courier New', Courier, monospace;
-
 }
 
 #bottomSide {
@@ -56,7 +52,6 @@ html {
     /* border: 1px solid rgb(255, 0, 0); */
     height: 400px;
     justify-content: space-evenly;
-  
 }
 
 .rowAlign {
@@ -78,17 +73,22 @@ html {
     border-radius: 15px
 }
 
+.calcButton:hover {
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+}
+
+.calcButton:active {
+    color: rgb(217, 255, 0);
+}
+
 #operatorButton {
-
     background-color: aquamarine;
-
 }
 
 #zero, #one, #two, #three, #four, #five,
 #six, #seven, #eight, #nine, #period {
-
     background-color: rgb(184, 184, 184);
-
 }
 
 #plus, #minus, #times, #divide {
@@ -103,3 +103,4 @@ html {
     background-color: rgb(252, 65, 65);
     width: 48.4%;
 }
+
