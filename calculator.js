@@ -1,9 +1,10 @@
 var displayValue = 0;
-var finalNumber = [];
+var resultNumber = [];
 var firstNumberStored = [];
 var secondNumberStored = [];
 var textOperator;
-var storedOperator;
+var firstStoredOperator;
+var secondStoredOperator;
 
 let currentDisplay = document.getElementById('calcDisplay');
 let parentOfDisplay = document.querySelector('#topSide');
@@ -26,57 +27,35 @@ function multiply(a, b) {
 
 function divide (a, b) {
     return parseInt(a) / parseInt(b);
-}8
+}
 
 function operate(operator, a, b) {
-    let result;
-
-    if (finalNumber[0] === undefined){
-        if (operator === 1) {
-            result = add(a,b);
-            finalNumber.push(result);
-            finalNumber = finalNumber.join("");
-        } else if (operator === 2) {
-            result = subtract(a,b);
-            finalNumber.push(result);
-            finalNumber = finalNumber.join("");
-        } else if (operator === 3) {
-            result = multiply(a,b);
-            finalNumber.push(result);
-            finalNumber = finalNumber.join("");
-        } else if (operator === 4) {
-            result = divide(a,b);
-            result = Number.parseFloat(result).toFixed(2);
-            finalNumber.push(result);
-            finalNumber = finalNumber.join("");
-        }
-    } else if (finalNumber[0]) {
-        
-        if (operator === 1) {
-            result = add(a,b);
-            finalNumber = [];
-            finalNumber.push(result);
-            finalNumber = finalNumber.join("");
-        } else if (operator === 2) {
-            result = subtract(finalNumber,b);
-            finalNumber = [];
-            finalNumber.push(result);
-            finalNumber = finalNumber.join("");
-        } else if (operator === 3) {
-            result = multiply(finalNumber,b);
-            finalNumber = [];
-            finalNumber.push(result);
-            finalNumber = finalNumber.join("");
-        } else if (operator === 4) {
-            result = divide(finalNumber,b);
-            finalNumber = [];
-            finalNumber.push(result);
-            finalNumber = finalNumber.join("");
-        }
-    }
     
-    displayValue = finalNumber;
-    currentDisplay.textContent = finalNumber;
+    if (secondStoredOperator) {
+        firstStoredOperator === secondStoredOperator;
+    }
+
+    if (firstStoredOperator === "+") {
+        resultNumber.push(add(a, b));
+        console.log ("Result Number:" + resultNumber);
+    } else if (firstStoredOperator === "-") {
+        resultNumber.push(subtract(a, b));
+        console.log ("Result Number:" + resultNumber);
+    } else if (firstStoredOperator === "x") {
+        resultNumber.push(multiply(a, b));
+        console.log ("Result Number:" + resultNumber);
+    } else if (firstStoredOperator === "÷") {
+        resultNumber.push(divide(a, b));
+        console.log ("Result Number:" + resultNumber);
+    } 
+
+    displayValue = resultNumber.join();
+    firstNumberStored.shift();
+    firstNumberStored.push(displayValue);
+    secondStoredOperator = null;
+    console.log("First Number Stored:" + firstNumberStored);
+    updateDisplay();
+    
 }
 
 function clearDisplay() {
@@ -84,67 +63,81 @@ function clearDisplay() {
     currentDisplay.textContent = displayValue;
 }
 
-function clearAll() {
 
-    displayValue = 0;
-    finalNumber = [];
-    firstNumberStored = [];
-    secondNumberStored = [];
-    textOperator = "";
-    storedOperator = 0;
-
-    currentDisplay.textContent = displayValue;
-    actionDisplay.textContent = "Cleared";
-}
-
-function removeDigit () {
-    let digitArray = Array.from(displayValue.toString()).map(Number);
-    if (digitArray.length === 1){
-        displayValue = 0;
-        currentDisplay.textContent = displayValue;
-    } else if (digitArray.length > 1) {
-        digitArray.splice(digitArray.length - 1, 1);
-        displayValue = digitArray.join("");
-        currentDisplay.textContent = displayValue;
-    }
-}
 
 function insertNumber (value) {
 
-    let digitArray = Array.from(displayValue.toString()).map(Number);
-    
-    if (digitArray[0] === 0 && digitArray.length === 1) {
-        digitArray.splice(0, 1, value);
-        displayValue = digitArray.join();
-        currentDisplay.textContent = displayValue;
-    } else if (digitArray.length >= 1 && digitArray.length < 13 && finalNumber[0]) {
-        digitArray = [];
-        digitArray.push(value);
-        displayValue = digitArray.join("");
-        currentDisplay.textContent = displayValue;
-    } else if (digitArray.length >= 1 && digitArray.length < 13) {
-        digitArray.push(value);
-        displayValue = digitArray.join("");
-        currentDisplay.textContent = displayValue;
-    } else if (digitArray.length === 13) {
-        digitArray.splice(0, 1);
-        digitArray.push(value);
-        displayValue = digitArray.join("");
-        currentDisplay.textContent = displayValue;
+    if (resultNumber.length > 0) {
+        console.log ("Result Number:" + resultNumber);
+        resultNumber.shift();
+        console.log ("Result Number:" + resultNumber);
+        clearDisplay();
     }
-    return displayValue;
+
+    let digitArray = Array.from(displayValue.toString()).map(Number);
+    digitArray.push(value);
+
+    if (digitArray[0] === 0 && digitArray.length > 1) {
+        digitArray.shift();
+    }
+
+    displayValue = digitArray.join("");
+    updateDisplay();
+
 }
 
-function storeFirstNumber (value) {
-    
-    if (firstNumberStored[0] === undefined) {
-        firstNumberStored.push(displayValue);
-        firstNumberStored = firstNumberStored.join("");
-       
 
-    } else if (firstNumberStored) {
-        actionDisplay.textContent = "Insert the next number!";
+function updateDisplay () {
+    currentDisplay.textContent = displayValue;
+}
+function updateActionDisplay (text) {
+    actionDisplay.textContent = "" + text + "";
+}
+
+function storeOperator (operator) {
+    
+    if (!firstStoredOperator) {
+        firstStoredOperator = operator;
+        updateActionDisplay(firstStoredOperator);
+    } else if (firstStoredOperator) {
+        secondStoredOperator = operator;
+        updateActionDisplay(secondStoredOperator);
     }
+    
+    if (firstNumberStored.length === 0) {
+        storeFirstNumber();
+        clearDisplay();
+    } else if (firstNumberStored.length > 0 && firstNumberStored.length > 0 && resultNumber.length > 0) {
+        console.log("Do nothing");
+    } else if (firstNumberStored.length > 0 && firstNumberStored.length > 0) {
+        storeSecondNumber();
+        operate(firstStoredOperator, firstNumberStored, secondNumberStored);
+    }
+
+}
+
+function storeFirstNumber () {
+    
+    if (firstNumberStored.length === 0) {
+        firstNumberStored.push(displayValue);
+        console.log("First Number Stored:" + firstNumberStored);
+        clearDisplay();
+    } else if (firstNumberStored.length > 0) {
+        firstNumberStored.shift();
+        firstNumberStored.push(displayValue);
+        console.log("First Number Stored:" + firstNumberStored);
+    }
+    
+}
+
+function storeSecondNumber () {
+    
+    secondNumberStored.push(displayValue);
+    if (secondNumberStored.length > 1) {
+            secondNumberStored.shift();
+    }
+    console.log("Second Number Stored:" + secondNumberStored);
+    
 }
 
 let calcButtons = document.querySelectorAll('.calcButton');
@@ -154,14 +147,6 @@ buttonArray.forEach(button => {
     button.addEventListener('click', function(e) {
         if (button.getAttribute('id') === 'clear') {
             clearAll();
-        } else if (button.getAttribute("id") === 'backspace') {
-            
-            if (finalNumber[0]) {
-                clearAll();
-            } else {
-                removeDigit();
-            }
-            
         } else if (button.getAttribute("id") === 'zero') {
             insertNumber(0);
         } else if (button.getAttribute("id") === 'one') {
@@ -183,93 +168,36 @@ buttonArray.forEach(button => {
         } else if (button.getAttribute("id") === 'nine') {
             insertNumber(9);
         } else if (button.getAttribute("id") === 'plus') {
-            storedOperator = 1;
-            textOperator = "+";
-            actionDisplay.textContent = textOperator;
-            if (firstNumberStored[0] === undefined && secondNumberStored !== undefined) {
-                storeFirstNumber();
-                clearDisplay();
-            } else if (firstNumberStored[0]) {
-                secondNumberStored = displayValue;
-                console.log(secondNumberStored);
-                operate(storedOperator, firstNumberStored, secondNumberStored);
-                firstNumberStored = finalNumber;
-                console.log(firstNumberStored);
-                
-            }
-          
+            storeOperator("+");
         } else if (button.getAttribute("id") === 'minus') {
-            storedOperator = 2;
-            textOperator = "-";
-            actionDisplay.textContent = textOperator;
-
-            if (firstNumberStored[0] === undefined && secondNumberStored !== undefined) {
-                storeFirstNumber();
-                clearDisplay();
-            } else if (firstNumberStored[0]) {
-                secondNumberStored = displayValue;
-                operate(storedOperator, firstNumberStored, secondNumberStored);
-                firstNumberStored = finalNumber;
-            }
-
+            storeOperator("-");
         } else if (button.getAttribute("id") === 'times') {
-            storedOperator = 3;
-            textOperator = "x";
-            actionDisplay.textContent = textOperator;
-
-            if (firstNumberStored[0] === undefined && secondNumberStored !== undefined) {
-                storeFirstNumber();
-                clearDisplay();
-            } else if (firstNumberStored[0]) {
-                secondNumberStored = displayValue;
-                operate(storedOperator, firstNumberStored, secondNumberStored);
-                firstNumberStored = finalNumber;
-            }
+            storeOperator("x");
         } else if (button.getAttribute("id") === 'divide') {
-            storedOperator = 4;
-            textOperator = "÷";
-            actionDisplay.textContent = textOperator;
-
-            if (firstNumberStored[0] === undefined && secondNumberStored !== undefined) {
-                storeFirstNumber();
-                clearDisplay();
-            } else if (firstNumberStored[0]) {
-                secondNumberStored = displayValue;
-                operate(storedOperator, firstNumberStored, secondNumberStored);
-                firstNumberStored = finalNumber;
-            }
-            
+            storeOperator("÷");
         } else if (button.getAttribute("id") === 'equals') {
-
-            if (firstNumberStored[0] === undefined) {
-                actionDisplay.textContent = "Choose number or operator!";
-
-            } else {
-                secondNumberStored = displayValue;
-                operate(storedOperator, firstNumberStored, secondNumberStored);
-                actionDisplay.textContent = "=";
-            }
-            
-        } 
-        
-        
+            if (firstNumberStored.length > 0 && firstNumberStored.length > 0 && resultNumber.length > 0) {
+                console.log("Do nothing");
+            } else if (firstNumberStored.length > 0 && firstNumberStored.length > 0) {
+                storeSecondNumber();
+                operate(firstStoredOperator, firstNumberStored, secondNumberStored);
+            }  
+        }
     })
 });
 
-// addEventListener('click', () => {
-//     if (calcButton.getAttribute('id') === 'clear') {
-//         clearAll();
-//     }
-// })
+function clearAll() {
 
-// const buttonArray = Array.from(document.querySelectorAll('.calcButton'));
+    displayValue = 0;
+    resultNumber = [];
+    firstNumberStored = [];
+    secondNumberStored = [];
+    textOperator = "";
+    firstStoredOperator = 0;
 
-// buttonArray.forEach(buttonElement => {
-//     buttonElement.addEventListener('click', function(e){ 
-//         removeExistingDisplay();
-//     })
-// });
-
+    currentDisplay.textContent = displayValue;
+    actionDisplay.textContent = "Cleared";
+}
 
 
 
