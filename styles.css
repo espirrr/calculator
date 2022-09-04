@@ -8,6 +8,10 @@ html {
     border: 1px solid black;
 }
 
+body {
+    background-color:rgb(193, 255, 255);
+}
+
 .calculatorBody {
     display: flex;
     flex-direction: column;
