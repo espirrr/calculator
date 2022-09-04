@@ -107,10 +107,6 @@ body {
     cursor: pointer;
 }
 
-.calcButton:active {
-    color: rgb(217, 255, 0);
-}
-
 #operatorButton {
     background-color: aquamarine;
 }
@@ -120,6 +116,12 @@ body {
     background-color: rgb(184, 184, 184);
 }
 
+#zero:active, #one:active, #two:active, #three:active, #four:active, #five:active,
+#six:active, #seven:active, #eight:active, #nine:active, #plus:active, #minus:active, 
+#times:active, #divide:active, #clear:active, #backspace:active, #equals:active {
+
+    background-color:rgb(193, 255, 255);
+}
 #zero {
     width: 170px;
 }
