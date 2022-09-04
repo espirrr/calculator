@@ -5,6 +5,7 @@ var secondNumberStored = [];
 var textOperator;
 var firstStoredOperator;
 var secondStoredOperator;
+var sameEquationCount = 0;
 
 let currentDisplay = document.getElementById('calcDisplay');
 let parentOfDisplay = document.querySelector('#topSide');
@@ -30,10 +31,15 @@ function divide (a, b) {
 }
 
 function operate(operator, a, b) {
-    
-    if (secondStoredOperator) {
-        firstStoredOperator === secondStoredOperator;
-    }
+    console.log("First Operator" + firstStoredOperator)
+    console.log("Second Operator" + secondStoredOperator)
+
+    if (secondStoredOperator && secondNumberStored && resultNumber.length > 0) {
+        firstStoredOperator = secondStoredOperator;
+    } 
+
+    console.log("First Operator" + firstStoredOperator)
+    console.log("Second Operator" + secondStoredOperator)
 
     if (firstStoredOperator === "+") {
         resultNumber.push(add(a, b));
@@ -52,8 +58,8 @@ function operate(operator, a, b) {
     displayValue = resultNumber.join();
     firstNumberStored.shift();
     firstNumberStored.push(displayValue);
-    secondStoredOperator = null;
     console.log("First Number Stored:" + firstNumberStored);
+    console.log("resultNumber:" + resultNumber);
     updateDisplay();
     
 }
@@ -72,6 +78,8 @@ function insertNumber (value) {
         resultNumber.shift();
         console.log ("Result Number:" + resultNumber);
         clearDisplay();
+        firstStoredOperator = secondStoredOperator;
+        sameEquationCount++;
     }
 
     let digitArray = Array.from(displayValue.toString()).map(Number);
@@ -107,12 +115,13 @@ function storeOperator (operator) {
     if (firstNumberStored.length === 0) {
         storeFirstNumber();
         clearDisplay();
-    } else if (firstNumberStored.length > 0 && firstNumberStored.length > 0 && resultNumber.length > 0) {
-        console.log("Do nothing");
-    } else if (firstNumberStored.length > 0 && firstNumberStored.length > 0) {
+    } else if (firstNumberStored.length > 0 && secondNumberStored.length > 0 && resultNumber.length > 0) {
+        secondStoredOperator = operator; 
+        console.log ("secondStoredOperator if resultNumber exists" + secondStoredOperator);
+    } else if (firstNumberStored.length > 0 && firstStoredOperator.length > 0) {
         storeSecondNumber();
         operate(firstStoredOperator, firstNumberStored, secondNumberStored);
-    }
+    } 
 
 }
 
@@ -176,16 +185,16 @@ buttonArray.forEach(button => {
         } else if (button.getAttribute("id") === 'divide') {
             storeOperator("÷");
         } else if (button.getAttribute("id") === 'equals') {
-            if (firstNumberStored.length > 0 && firstNumberStored.length > 0 && resultNumber.length > 0) {
+            if (firstNumberStored.length > 0 && secondNumberStored.length > 0 && resultNumber.length > 0) {
                 console.log("Do nothing");
-            } else if (firstNumberStored.length > 0 && firstNumberStored.length > 0) {
+            } else if (firstNumberStored.length > 0) {
                 storeSecondNumber();
                 operate(firstStoredOperator, firstNumberStored, secondNumberStored);
             }  
         }
     })
 });
-
+ 
 function clearAll() {
 
     displayValue = 0;
@@ -194,10 +203,9 @@ function clearAll() {
     secondNumberStored = [];
     textOperator = "";
     firstStoredOperator = 0;
+    secondStoredOperator = 0;
+    sameEquationCount = 0;
 
     currentDisplay.textContent = displayValue;
     actionDisplay.textContent = "Cleared";
 }
-
-
-
