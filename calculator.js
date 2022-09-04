@@ -2,7 +2,6 @@ var displayValue = 0;
 var resultNumber = [];
 var firstNumberStored = [];
 var secondNumberStored = [];
-var textOperator;
 var firstStoredOperator;
 var secondStoredOperator;
 var sameEquationCount = 0;
@@ -12,7 +11,7 @@ let parentOfDisplay = document.querySelector('#topSide');
 let actionDisplay = document.getElementById('calcNotes');
 
 currentDisplay.textContent = displayValue;
-actionDisplay.textContent = "Click to use Calculator :D";
+actionDisplay.textContent = "Click to use Calculator";
 
 function add(a, b) {
     return parseInt(a) + parseInt(b);
@@ -31,35 +30,26 @@ function divide (a, b) {
 }
 
 function operate(operator, a, b) {
-    console.log("First Operator" + firstStoredOperator)
-    console.log("Second Operator" + secondStoredOperator)
-
+ 
     if (secondStoredOperator && secondNumberStored && resultNumber.length > 0) {
         firstStoredOperator = secondStoredOperator;
     } 
 
-    console.log("First Operator" + firstStoredOperator)
-    console.log("Second Operator" + secondStoredOperator)
-
     if (firstStoredOperator === "+") {
         resultNumber.push(add(a, b));
-        console.log ("Result Number:" + resultNumber);
     } else if (firstStoredOperator === "-") {
         resultNumber.push(subtract(a, b));
-        console.log ("Result Number:" + resultNumber);
     } else if (firstStoredOperator === "x") {
         resultNumber.push(multiply(a, b));
-        console.log ("Result Number:" + resultNumber);
     } else if (firstStoredOperator === "÷") {
         resultNumber.push(divide(a, b));
-        console.log ("Result Number:" + resultNumber);
     } 
 
     displayValue = resultNumber.join();
+    displayValue = parseFloat(displayValue).toFixed(2);
+
     firstNumberStored.shift();
     firstNumberStored.push(displayValue);
-    console.log("First Number Stored:" + firstNumberStored);
-    console.log("resultNumber:" + resultNumber);
     updateDisplay();
     
 }
@@ -69,21 +59,24 @@ function clearDisplay() {
     currentDisplay.textContent = displayValue;
 }
 
-
-
 function insertNumber (value) {
 
     if (resultNumber.length > 0) {
-        console.log ("Result Number:" + resultNumber);
         resultNumber.shift();
-        console.log ("Result Number:" + resultNumber);
         clearDisplay();
         firstStoredOperator = secondStoredOperator;
         sameEquationCount++;
     }
 
     let digitArray = Array.from(displayValue.toString()).map(Number);
-    digitArray.push(value);
+    
+    if (digitArray.length < 13) {
+        digitArray.push(value);
+    } else if (digitArray.length === 13) {
+        digitArray.shift();
+        digitArray.push(value);
+    }
+    
 
     if (digitArray[0] === 0 && digitArray.length > 1) {
         digitArray.shift();
@@ -94,10 +87,11 @@ function insertNumber (value) {
 
 }
 
-
 function updateDisplay () {
+
     currentDisplay.textContent = displayValue;
 }
+
 function updateActionDisplay (text) {
     actionDisplay.textContent = "" + text + "";
 }
@@ -117,7 +111,6 @@ function storeOperator (operator) {
         clearDisplay();
     } else if (firstNumberStored.length > 0 && secondNumberStored.length > 0 && resultNumber.length > 0) {
         secondStoredOperator = operator; 
-        console.log ("secondStoredOperator if resultNumber exists" + secondStoredOperator);
     } else if (firstNumberStored.length > 0 && firstStoredOperator.length > 0) {
         storeSecondNumber();
         operate(firstStoredOperator, firstNumberStored, secondNumberStored);
@@ -126,27 +119,54 @@ function storeOperator (operator) {
 }
 
 function storeFirstNumber () {
-    
     if (firstNumberStored.length === 0) {
         firstNumberStored.push(displayValue);
-        console.log("First Number Stored:" + firstNumberStored);
         clearDisplay();
     } else if (firstNumberStored.length > 0) {
         firstNumberStored.shift();
         firstNumberStored.push(displayValue);
-        console.log("First Number Stored:" + firstNumberStored);
     }
-    
 }
 
 function storeSecondNumber () {
-    
     secondNumberStored.push(displayValue);
     if (secondNumberStored.length > 1) {
             secondNumberStored.shift();
     }
-    console.log("Second Number Stored:" + secondNumberStored);
+}
+
+function calculate() {
     
+    if (firstNumberStored.length > 0 && secondNumberStored.length > 0 && resultNumber.length > 0) {
+        updateActionDisplay("Click your next number!");
+    } else if (firstNumberStored.length > 0) {
+        storeSecondNumber();
+        operate(firstStoredOperator, firstNumberStored, secondNumberStored);
+        updateActionDisplay("Clear all and do another calculation!");
+    }  
+
+    if (displayValue === "Infinity") {
+        updateActionDisplay("You've opened a black hole!")
+    }
+
+}
+
+function removeDigit () {
+
+    let digitArray = Array.from(displayValue.toString()).map(Number);
+
+    if (resultNumber.length > 0 && firstNumberStored && secondNumberStored){
+        updateActionDisplay("Cannot backspace the result!");
+    } else if (digitArray.length === 1){
+        digitArray.splice(0, 1, "0");
+        displayValue = digitArray.join("");
+        currentDisplay.textContent = displayValue;
+    } else if (digitArray.length > 1) {
+        digitArray.splice(digitArray.length - 1, 1);
+        displayValue = digitArray.join("");
+        currentDisplay.textContent = displayValue;
+    }
+
 }
 
 let calcButtons = document.querySelectorAll('.calcButton');
@@ -185,13 +205,10 @@ buttonArray.forEach(button => {
         } else if (button.getAttribute("id") === 'divide') {
             storeOperator("÷");
         } else if (button.getAttribute("id") === 'equals') {
-            if (firstNumberStored.length > 0 && secondNumberStored.length > 0 && resultNumber.length > 0) {
-                console.log("Do nothing");
-            } else if (firstNumberStored.length > 0) {
-                storeSecondNumber();
-                operate(firstStoredOperator, firstNumberStored, secondNumberStored);
-            }  
-        }
+            calculate();
+        } else if (button.getAttribute("id") === 'backspace') {
+            removeDigit();
+        } 
     })
 });
  
@@ -201,11 +218,9 @@ function clearAll() {
     resultNumber = [];
     firstNumberStored = [];
     secondNumberStored = [];
-    textOperator = "";
     firstStoredOperator = 0;
     secondStoredOperator = 0;
     sameEquationCount = 0;
-
     currentDisplay.textContent = displayValue;
     actionDisplay.textContent = "Cleared";
 }

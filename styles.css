@@ -37,6 +37,7 @@ html {
     justify-content: flex-end;
     align-items: center;
     word-wrap: break-word;
+    overflow: hidden;
     float: right;
 
     background-color: rgb(255, 241, 219);
@@ -127,8 +128,8 @@ html {
     background-color: yellow;
 }
 
-#clear {
+#clear, #backspace {
     background-color: rgb(252, 65, 65);
-    width: 100%;
+    width: 48%;
 }
 
